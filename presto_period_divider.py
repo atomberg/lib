@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import datetime
+from tqdm import tqdm
 
 
 def get_trips(filename):
@@ -12,7 +13,7 @@ def get_trips(filename):
     return trips
 
 
-trips = get_trips('Downloads/TUR_2018_06495883_024.csv')
+trips = get_trips('~/Downloads/TUR_2018_06495883_024.csv')
 answers = {}
 
 
@@ -25,19 +26,22 @@ def optimise(j):
         else:
             answers[j] = [], -1
     else:
-        i = j - 32
+        i = j - 31
         max_score, answer = -1, (None, None)
         while trips[i:j].sum() > 31:
             previous, score = optimise(i)
-            if score > max_score:
-                max_score, answer = score, (i, previous)
+            if score + trips[i:j].sum() > max_score:
+                max_score, answer = score + trips[i:j].sum(), previous + [i]
             i += 1
         if max_score < 0:
             answers[j] = [], -1
         else:
-            answers[j] = answer[1] + [answer[0]], max_score + trips[answer[0]:j].sum()
+            answers[j] = answer, max_score
     return answers[j]
 
+
+for i in tqdm(range(len(trips))):
+    optimise(i)
 
 periods, score = optimise(len(trips))
 periods.append(len(trips))
