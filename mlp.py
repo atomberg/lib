@@ -23,7 +23,7 @@ def build_mlp(input_var, layer_widths, input_dropout=.2, hidden_dropout=.5):
     nonlin = lasagne.nonlinearities.rectify
     for width in layer_widths:
         network = lasagne.layers.DenseLayer(
-            network, width, nonlinearity=nonlin,  W=Normal(), b=Constant(val=.1))
+            network, width, nonlinearity=nonlin, W=Normal(), b=Constant(val=.1))
         if hidden_dropout:
             network = lasagne.layers.dropout(network, p=hidden_dropout)
 
@@ -106,10 +106,9 @@ def main(num_epochs=500):
         # Then we print the results for this epoch:
         # print("Epoch {} of {} took {:.3f}s".format(
         #     epoch + 1, num_epochs, time.time() - start_time))
-        print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
-        print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
-        print("  validation accuracy:\t\t{:.2f} %".format(
-            val_acc / val_batches * 100))
+        print(f"  training loss:\t\t{train_err / train_batches:.6f}")
+        print(f"  validation loss:\t\t{val_err / val_batches:.6f}")
+        print(f"  validation accuracy:\t\t{val_acc / val_batches * 100:.2f} %")
 
     # After training, we compute and print the test error:
     test_err = 0
@@ -122,9 +121,8 @@ def main(num_epochs=500):
         test_acc += acc
         test_batches += 1
     print("Final results:")
-    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
-    print("  test accuracy:\t\t{:.2f} %".format(
-        test_acc / test_batches * 100))
+    print(f"  test loss:\t\t\t{test_err / test_batches:.6f}")
+    print(f"  test accuracy:\t\t{test_acc / test_batches * 100:.2f} %")
 
     # Optionally, you could now dump the network weights to a file like this:
     # np.savez('model.npz', *lasagne.layers.get_all_param_values(network))
