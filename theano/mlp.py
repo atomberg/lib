@@ -1,14 +1,13 @@
 """Multi-layer perceptron training script."""
 
-import numpy as np
 import theano
 import theano.tensor as T
 
 import lasagne
 from lasagne.init import Constant, Normal
 
-from tqdm import trange
-from data_loader import load_dataset
+from lib.datasets.creditcard import load_dataset
+from lib.datasets.base_dataset import iterate_minibatches
 
 
 def build_mlp(input_var, layer_widths, input_dropout=.2, hidden_dropout=.5):
@@ -31,19 +30,6 @@ def build_mlp(input_var, layer_widths, input_dropout=.2, hidden_dropout=.5):
     softmax = lasagne.nonlinearities.softmax
     network = lasagne.layers.DenseLayer(network, 2, nonlinearity=softmax)
     return network
-
-
-def iterate_minibatches(X, Y, batchsize, shuffle=False, progress=False):
-    assert len(X) == len(Y)
-    if shuffle:
-        indices = np.arange(len(X))
-        np.random.shuffle(indices)
-    for start_idx in (trange if progress else range)(0, len(X) - batchsize + 1, batchsize):
-        if shuffle:
-            excerpt = indices[start_idx:start_idx + batchsize]
-        else:
-            excerpt = slice(start_idx, start_idx + batchsize)
-        yield X[excerpt], Y[excerpt]
 
 
 def main(num_epochs=500):
